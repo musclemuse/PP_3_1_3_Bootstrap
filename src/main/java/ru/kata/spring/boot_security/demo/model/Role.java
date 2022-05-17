@@ -23,7 +23,7 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "role")
+    @Column(name = "name")
     private String name;
 
     @Transient
@@ -38,6 +38,11 @@ public class Role implements GrantedAuthority {
     @Override
     public String toString() {
         return name;
+    }
+
+    public Role(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 }
 

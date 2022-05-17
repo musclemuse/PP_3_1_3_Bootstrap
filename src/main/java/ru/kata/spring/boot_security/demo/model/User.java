@@ -80,4 +80,13 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public User(Long id, String firstname, String password, String lastname, Integer age, String username) {
+        this.id = id;
+        this.firstname = firstname;
+        this.password = password;
+        this.lastname = lastname;
+        this.age = age;
+        this.username = username;
+    }
 }

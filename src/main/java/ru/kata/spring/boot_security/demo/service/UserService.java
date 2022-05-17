@@ -13,14 +13,17 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -44,7 +47,8 @@ public class UserService implements UserDetailsService {
     //методы CRUD
 
     public User add(User user) {
-        return userRepository.saveAndFlush(user);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 
     public void removeUserById(long id) {
@@ -52,7 +56,8 @@ public class UserService implements UserDetailsService {
     }
 
     public User update(User user) {
-        return userRepository.saveAndFlush(user);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 
     public List<User> listOfAllUsers() {
@@ -61,5 +66,20 @@ public class UserService implements UserDetailsService {
 
     public User findByUsername(String name) {
         return userRepository.findByUsername(name);
+    }
+
+    @PostConstruct
+    @Transactional
+
+    void AddUsers() {
+
+        Role role1 = new Role(1L, "ROLE_ADMIN");
+        Role role2 = new Role(2L, "ROLE_USER");
+//
+        userRepository.save(new User(1L, "admin", "$2a$12$5/LJTcY5BTW/1dfKXfkONu9SiZbiZfAy2B41V2MuIVrimLrY4ew0K", "admin", 32, "admin@admin.ru"))
+                .setRoles(Collections.singleton(role1));
+        userRepository.save(new User(2L, "user", "$2a$12$T3fRruYVddVDEv/6kbYOhuKSMp4YKx/YvjYiYvtL.QjiEF2rNIZuy", "user", 68, "user@user.ru"))
+                .setRoles(Collections.singleton(role2));
+
     }
 }
